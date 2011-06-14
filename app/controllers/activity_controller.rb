@@ -1,9 +1,7 @@
 class ActivityController < ApplicationController
   def recent
-    @recent_twenty_checkins = Checkin.find(:all, :order_by => 'checkin_time desc', :limit => 20)
-    @recent_twenty_tags = Tag.find(:all, ::order_by => 'tag_time desc', :limit => 20)
-    
-    
+    @recent_twenty_checkins = Checkin.find(:all, :order => 'checkin_time desc', :limit => 20)
+    @recent_twenty_tags = Tag.find(:all, :order => 'tag_time desc', :limit => 20)    
   end
   
   def status

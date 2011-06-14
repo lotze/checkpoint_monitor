@@ -1,4 +1,7 @@
 SurvivedcOrg::Application.routes.draw do
+  root :to => "activity#recent"
+
+
   #resources :users
   #resources :checkpoints
   #resources :checkins

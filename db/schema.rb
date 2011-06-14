@@ -10,45 +10,48 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110531221431) do
+ActiveRecord::Schema.define(:version => 20110602000000) do
 
-  create_table "catches", :force => true do |t|
-    t.string   "chaser_id"
+  create_table "checkins", :id => false, :force => true do |t|
+    t.integer  "checkin_id"
     t.string   "runner_id"
-    t.datetime "reported_timestamp"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
-  create_table "checkins", :force => true do |t|
-    t.string   "runner_id"
-    t.string   "checkpoint_id"
-    t.float    "longitude"
-    t.float    "latitude"
+    t.integer  "checkpoint_id"
+    t.datetime "checkin_time"
     t.string   "device_id"
-    t.datetime "reported_timestamp"
-    t.string   "checksum"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string   "user_agent"
+    t.float    "lng"
+    t.float    "lat"
   end
 
-  create_table "checkpoints", :force => true do |t|
-    t.string   "checkpoint_id"
-    t.float    "longitude"
-    t.float    "latitude"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+  create_table "checkpoints", :id => false, :force => true do |t|
+    t.integer "checkpoint_id"
+    t.string  "checkpoint_name"
+    t.float   "checkpoint_loc_lat"
+    t.float   "checkpoint_loc_long"
   end
 
-  create_table "users", :force => true do |t|
+  create_table "runners", :id => false, :force => true do |t|
     t.string   "runner_id"
-    t.string   "photo_file"
-    t.string   "name"
-    t.string   "email"
+    t.string   "player_email"
+    t.string   "player_name"
+    t.boolean  "is_mugshot"
+    t.datetime "time_of_mugshot"
+    t.boolean  "is_registered"
+    t.datetime "time_of_registration"
+    t.boolean  "is_tagged"
+  end
+
+  create_table "tags", :id => false, :force => true do |t|
+    t.integer  "tag_id"
+    t.string   "runner_id"
+    t.string   "tagger_id"
+    t.datetime "tag_time"
+    t.float    "loc_lat"
+    t.float    "loc_long"
+    t.string   "loc_addr"
     t.string   "device_id"
-    t.string   "browser_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string   "user_agent"
+    t.string   "ip_address"
   end
 
 end
