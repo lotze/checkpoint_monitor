@@ -17,6 +17,7 @@ class ActivityController < ApplicationController
     @start_time = @summarized_checkpoints.map {|sc| sc.first_checkin_time}.min
     @end_time = @summarized_checkpoints.map {|sc| sc.last_checkin_time}.max
       
+      
     # TODO: in the view, show the by-minute-interval plot of activity at each checkpoint
   end 
 end

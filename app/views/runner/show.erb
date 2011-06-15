@@ -1,0 +1,13 @@
+<h1>Runner ID: <%= @runner.id %></h1>
+
+<% if (@is_chaser) %>
+<br />Currently a chaser.  As a chaser, has logged <%= @num_caught %> tags -- ranked <%= @num_with_more_catches + 1 %> out of <%= @num_chasers %> chasers with tags!
+<% else %>
+<br />Not caught yet!
+<% end %>
+
+<br />As a runner, currently placed <%= @num_reached_this_checkpoint_ahead_of_you_or_further_checkpoints %> out of <%= @num_runners > runners.
+
+<% @runner.checkins.sort {|a, b| a.checkin_time <=> b.checkin_time}.reverse.each do |checkin| %>
+<br />As a runner, made it to checkpoint <%= checkin.checkpoint.checkpoint_name %> at <%= checkin.checkin_time %>.
+<% end %>

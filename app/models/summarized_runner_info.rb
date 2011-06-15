@@ -9,6 +9,6 @@ class SummarizedRunnerInfo < ActiveRecord::Base
     @first_checkin_time = @checkin_list.first.checkin_time
     @last_checkin_time = @checkin_list.last.checkin_time
     
-    @current_checkpoint = @checkin_list.last
+    @current_checkpoint = @checkin_list.last.checkpoint
   end
 end
