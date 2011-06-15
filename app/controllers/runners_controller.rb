@@ -15,7 +15,7 @@ class RunnersController < ApplicationController
     end
     
     current_checkin = @runner.current_checkin
-    @num_reached_this_checkpoint_ahead_of_you_or_further_checkpoints = Checkin.find(:all, :conditions => ["(checkpoint_id = ? AND checkin_time > ?) OR checkpoint_id > ?",current_checkin.checkpoint_id, current_checkin.checkin_time, current_checkin.checkpoint_id]).size
+    @num_reached_this_checkpoint_ahead_of_you_or_further_checkpoints = Checkin.find(:all, :conditions => ["(checkpoint_id = ? AND checkin_time < ?) OR checkpoint_id > ?",current_checkin.checkpoint_id, current_checkin.checkin_time, current_checkin.checkpoint_id]).size
   end
   
   def register
