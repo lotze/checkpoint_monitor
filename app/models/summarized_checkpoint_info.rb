@@ -1,18 +1,22 @@
-class SummarizedCheckpointInfo < ActiveRecord::Base
+class SummarizedCheckpointInfo
   attr_reader :checkpoint, :checkin_list, :first_checkin_time, :last_checkin_time, :num_checked_in 
   
-  def init(checkpoint, checkin_list=checkpoint.checkins)
+  def initialize(checkpoint)
     @checkpoint = checkpoint
-    @checkin_list = checkin_list.sort {|a, b| a.checkin_time <=> b.checkin_time}
+    @checkin_list = @checkpoint.checkins.sort {|a, b| a.checkin_time <=> b.checkin_time}
     
     # precompute some statistics
-    @first_checkin_time = @checkin_list.first.checkin_time
-    @last_checkin_time = @checkin_list.last.checkin_time
     @num_checked_in = @checkin_list.length
+    if (@num_checked_in > 0)
+      @first_checkin_time = @checkin_list.first.checkin_time
+      @last_checkin_time = @checkin_list.last.checkin_time
+    end
   end
   
   # get a list of, per x minutes, the number of checkins over that five minute period
-  def checkin_hist(minute_list, start_time=@first_checkin_time.to_i, end_time=@last_checkin_time.to_i, minute_interval = 5)
+  def checkin_hist(start_time=@first_checkin_time, end_time=@last_checkin_time, minute_interval=5)
+    start_time = start_time.to_i
+    end_time = end_time.to_i
     num_intervals = ((end_time - start_time)/(minute_interval * 60)).ceil
     
     end_times = (1..num_intervals).map {|interval_index| start_time + minute_interval*interval_index*60}

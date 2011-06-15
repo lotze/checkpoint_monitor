@@ -11,11 +11,11 @@ class SampleDataGenerator
     runner_ids.each do |runner_id|
       Runner.create!(:runner_id => runner_id)
     end
-    checkpoint_ids.each_with_index do |checkpoint_name, index|
+    checkpoint_names.each_with_index do |checkpoint_name, index|
       Checkpoint.create!(:checkpoint_name => checkpoint_name, :checkpoint_id => index + 100)
     end
-    runners = runner_ids.map {|rid| Runner.find(rid)}
-    checkpoints = checkpoint_names.map {|c| Checkpoint.find(:first, :conditions => {:checkpoint_name => c})})}
+    runners = runner_ids.map {|rid| Runner.find(:first, :conditions => {:runner_id => rid})}
+    checkpoints = checkpoint_names.map {|c| Checkpoint.find(:first, :conditions => {:checkpoint_name => c})}
     
     first_half_checkpoints = checkpoints[1..(((checkpoints.size-1)/2).round)]
     
@@ -42,7 +42,7 @@ class SampleDataGenerator
   end
   
   def self.generate_finishing_data
-    runners = runner_ids.map {|rid| Runner.find(rid)}
+    runners = runner_ids.map {|rid| Runner.find(:first, :conditions => {:runner_id => rid})}
     checkpoints = checkpoint_names.map {|c| Checkpoint.find(:first, :conditions => {:checkpoint_name => c})})}
     second_half_checkpoints = checkpoints[((((checkpoints.size-1)/2).round)+1)..(checkpoints.size-1)]
     
@@ -56,7 +56,7 @@ class SampleDataGenerator
   end
   
   def self.delete_generated_data
-    runners = runner_ids.map {|rid| Runner.find(rid)}
+    runners = runner_ids.map {|rid| Runner.find(:first, :conditions => {:runner_id => rid})}
     checkpoints = checkpoint_names.map {|cname| Checkpoint.find(:first, :conditions => {:checkpoint_name => cname})})}
       
     runners.map {|runner| runner.checkins.destroy_all}

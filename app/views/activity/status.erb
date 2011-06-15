@@ -3,3 +3,14 @@
 <% @summarized_checkpoints.each do |summarized_checkpoint| %>
 <br />Checkpoint <%= summarized_checkpoint.checkpoint.checkpoint_name %>: <%= summarized_checkpoint.num_checked_in %> runners have checked in, most recently at <%= summarized_checkpoint.last_checkin_time %> 
 <% end %>
+
+<br />
+<%= @status_plot %>
+
+<script>
+ $(document).ready(function() {
+   var refreshId = setInterval(function() {
+      window.location.reload();
+   }, 300000);
+});
+</script>
