@@ -17,10 +17,9 @@ class SummarizedCheckpointInfo
   def checkin_hist(start_time=@first_checkin_time, end_time=@last_checkin_time, minute_interval=5)
     start_time = start_time.to_i
     end_time = end_time.to_i
-    num_intervals = ((end_time - start_time)/(minute_interval * 60)).ceil
-    
+    num_intervals = ((end_time - start_time)/(minute_interval * 60.0)).ceil    
     end_times = (1..num_intervals).map {|interval_index| start_time + minute_interval*interval_index*60}
-      
+
     interval_counts = (1..num_intervals).map {|interval_index| 0}
 
     interval_index = 0

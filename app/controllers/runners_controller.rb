@@ -1,6 +1,6 @@
-class RunnerController < ApplicationController
+class RunnersController < ApplicationController
   def show
-    @runner = Runner.find(params[:id])
+    @runner = Runner.find(:first, :conditions => {:runner_id => params[:runner_id]})
       
     @is_chaser = @runner.caught_by.present?
     @num_caught = @runner.tags.size
