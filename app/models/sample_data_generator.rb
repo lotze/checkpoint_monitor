@@ -26,8 +26,8 @@ class SampleDataGenerator
       Checkin.create!(:runner => runner, :checkpoint => checkpoints[0], :checkin_time => runner_time)
       runner_time = start_time
       first_half_checkpoints.each do |checkpoint|
-        Checkin.create!(:runner => runner, :checkpoint => checkpoint, :checkin_time => runner_time)
         runner_time = runner_time + rand(1800)
+        Checkin.create!(:runner => runner, :checkpoint => checkpoint, :checkin_time => runner_time)
       end
     end
   end
@@ -49,8 +49,8 @@ class SampleDataGenerator
     runners.each do |runner|
       runner_time = runner.current_checkin.checkin_time
       second_half_checkpoints.each do |checkpoint|
+        runner_time = runner_time + rand(2400)
         Checkin.create!(:runner => runner, :checkpoint => checkpoint, :checkin_time => runner_time)
-        runner_time = runner_time + rand(1800)
       end
     end    
   end

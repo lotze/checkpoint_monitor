@@ -18,6 +18,11 @@ class RunnersController < ApplicationController
     @num_reached_this_checkpoint_ahead_of_you_or_further_checkpoints = Checkin.find(:all, :conditions => ["(checkpoint_id = ? AND checkin_time < ?) OR checkpoint_id > ?",current_checkin.checkpoint_id, current_checkin.checkin_time, current_checkin.checkpoint_id]).size
   end
   
+  def index
+    @ordered_runners = Runners.find(:all).sort {|a, b| b.current_checkin.checkpoint_id <=> a.current_checkin.checkpoint_id || a.current_checkin.checkin_time <=> b.current_checkin.checkin_time}[0..20]
+    @ordered_chasers = Runners.find(:all).sort {|a, b| b.tags.size <=> a.tags.size}[0..10]
+  end
+  
   def register
   end
 end

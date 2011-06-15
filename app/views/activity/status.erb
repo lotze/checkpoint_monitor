@@ -1,4 +1,4 @@
-<br /><%= @total_players %> players have checked in so far.
+<br /><%= @total_players %> players are running.
 
 <% @summarized_checkpoints.each do |summarized_checkpoint| %>
 <br />Checkpoint <%= summarized_checkpoint.checkpoint.checkpoint_name %>: <%= summarized_checkpoint.num_checked_in %> runners have checked in, most recently at <%= summarized_checkpoint.last_checkin_time %> 
