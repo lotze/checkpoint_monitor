@@ -1,10 +1,10 @@
 class SampleDataGenerator
   def self.runner_ids
-    ['RUBIN','TOMAS','RABIT','DARBY','SEANM','SAMPL','IANKB','ARTMS','MYRNA','DAXTC']
+    ['RUBIN','TOMAS','RABIT','DARBY','SEANM','SAMPL','IANKB','ARTMS','MYRNA','DAXTC'].concat(Range.new(10,99).map {|runner_num| "RUN#{runner_num}"})
   end
   
   def self.checkpoint_names
-    ['Checkpoint 0 Start','Checkpoint 1 Awesome','Checkpoint 2 Kazam','Checkpoint 3 More','Checkpoint 4 Finish']
+    Range.new(0,8).map {|cp_num| "Checkpoint #{cp_num}"}
   end
   
   def self.generate_early_data
