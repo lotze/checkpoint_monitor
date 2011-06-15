@@ -14,6 +14,7 @@ class RunnersController < ApplicationController
       @num_chasers = ActiveRecord::Base.connection.execute("SELECT COUNT(DISTINCT tagger_id) from tags;").first[0]
     end
     
+    current_checkin = @runner.current_checkin
     @num_reached_this_checkpoint_ahead_of_you_or_further_checkpoints = Checkin.find(:all, :conditions => ["(checkpoint_id = ? AND checkin_time > ?) OR checkpoint_id > ?",current_checkin.checkpoint.id, current_checkin.checkin_time, current_checkin.checkpoint.id]).size    
   end
   

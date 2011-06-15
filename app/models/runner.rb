@@ -5,7 +5,12 @@ class Runner < ActiveRecord::Base
   has_many :tagged, :class_name => Tag, :foreign_key => :runner_id, :primary_key => :runner_id  
 
   def caught_by
-    Tag.find(:first, :conditions => {:runner_id => id}).chaser
+    t = Tag.find(:first, :conditions => {:runner_id => id})
+    if t.present?
+      t.chaser
+    else
+      nil
+    end
   end
   
   def current_checkin

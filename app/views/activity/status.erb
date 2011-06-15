@@ -5,8 +5,8 @@
 <% end %>
 
 <br />
-<%= @line_plot %>
-<%= @status_plot %>
+<%= @line_plot.html_safe %>
+<%= @status_plot.html_safe %>
 
 <script>
  $(document).ready(function() {

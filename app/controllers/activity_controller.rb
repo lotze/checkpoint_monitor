@@ -42,12 +42,13 @@ class ActivityController < ApplicationController
     @status_plot = ActivityController.stream_plot(end_times, time_map_by_highest_checkpoint)
   end 
   
-  def self.line_plot(times, data_hash)
-    times = times.to_i * 1000
+  def self.line_plot(x_axis, data_hash)
+    x_axis = x_axis.map{|t| t.to_i * 1000}
     series_names = data_hash.keys
     
     basename="activity"
     x_is_timestamp = true
+    x_is_character = false
     xlab=""
     ylab="number of runners checking in"
     main="checkpoint activity over time"
@@ -160,7 +161,7 @@ class ActivityController < ApplicationController
       });
     });
     </script>
-    JS
+JS
   end
   
   def self.stream_plot(times, data_hash)
