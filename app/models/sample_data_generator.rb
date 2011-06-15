@@ -59,9 +59,9 @@ class SampleDataGenerator
     runners = runner_ids.map {|rid| Runner.find(:first, :conditions => {:runner_id => rid})}
     checkpoints = checkpoint_names.map {|cname| Checkpoint.find(:first, :conditions => {:checkpoint_name => cname})}
       
-    runners.map {|runner| runner.checkins.destroy_all}
-    runners.map {|runner| runner.tagged.destroy_all}
-    runners.map {|runner| runner.tags.destroy_all}
+    runners.each {|runner| runner.checkins.destroy_all}
+    runners.each {|runner| runner.tagged.destroy_all}
+    runners.each {|runner| runner.tags.destroy_all}
     runners.destroy_all
     checkpoints.destroy_all
   end
