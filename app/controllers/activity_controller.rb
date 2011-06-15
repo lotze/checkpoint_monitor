@@ -15,12 +15,14 @@ class ActivityController < ApplicationController
     # also report on how many players are known to have become chasers, and what the highest number of reported catches is so far
       
     # in the view, show the by-minute-interval plot of activity at each checkpoint
-    start_time = @summarized_checkpoints.map {|sc| sc.first_checkin_time}.min
-    end_time = @summarized_checkpoints.map {|sc| sc.last_checkin_time}.max
+    start_time = @summarized_checkpoints.map {|sc| sc.first_checkin_time}.compact.min
+    end_time = @summarized_checkpoints.map {|sc| sc.last_checkin_time}.compact.max
     minute_interval=5
     num_intervals = ((end_time - start_time)/(minute_interval * 60)).ceil    
     end_times = (1..num_intervals).map {|interval_index| start_time + minute_interval*interval_index*60}
-    @status_plot = ActivityController.status_plot(end_times, @summarized_checkpoints.collect([]) {|total, sm| total.merge {sm.checkpoint.checkpoint_name => sm.checkin_hist()}})
+    
+    merged_map = @summarized_checkpoints.inject({}) {|total, sm| total.merge(sm.checkpoint.checkpoint_name => sm.checkin_hist(start_time,end_time,minute_interval))}
+    @status_plot = ActivityController.status_plot(end_times, merged_map)
   end 
   
   def self.status_plot(times, data_hash)
