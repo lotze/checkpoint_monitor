@@ -67,6 +67,12 @@ class ActivityController < ApplicationController
     </td></tr>
     </table>
     
+    <link href="/cpm/stylesheets/flot/layout.css" rel="stylesheet" type="text/css">
+    <!--[if lte IE 8]><script language="javascript" type="text/javascript" src="/cpm/javascripts/vendor/flot/excanvas.min.js"></script><![endif]-->
+    <script language="javascript" type="text/javascript" src="/cpm/javascripts/vendor/flot/jquery.js"></script>
+    <script language="javascript" type="text/javascript" src="/cpm/javascripts/vendor/flot/jquery.flot.js"></script>
+    <script language="javascript" type="text/javascript" src="/cpm/javascripts/vendor/flot/jquery.flot.selection.js"></script>
+
     <script id="#{basename}_source" language="javascript" type="text/javascript">
     $(function () {
       #{x_is_character ? "var #{basename}_data = #{data_hash.values.map{|data_list| data_list.enum_for(:each_with_index).collect{|data_point, i| [i, data_point]}}.to_json};\n var #{basename}_ticks = #{x_axis.enum_for(:each_with_index).collect{|label, i| [i, label]}.to_json};" : "var #{basename}_data = #{data_hash.values.map{|data_list| data_list.enum_for(:each_with_index).collect{|data_point, i| [x_axis[i], data_point]}}.to_json};"}
