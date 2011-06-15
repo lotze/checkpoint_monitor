@@ -26,7 +26,7 @@ class SummarizedCheckpointInfo
     interval_start = start_time    
     interval_end = start_time + minute_interval*60    
     @checkin_list.each do |checkin|
-      while (checkin.checkin_time > interval_end) do
+      while (checkin.checkin_time.to_i > interval_end) do
         interval_start = interval_end
         interval_end = interval_end + minute_interval*60
         interval_index += 1
