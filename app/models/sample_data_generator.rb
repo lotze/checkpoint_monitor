@@ -48,7 +48,7 @@ class SampleDataGenerator
     
     runners.each do |runner|
       runner_time = runner.current_checkin.checkin_time
-      second_half_checkpoints do |checkpoint|
+      second_half_checkpoints.each do |checkpoint|
         Checkin.create!(:runner => runner, :checkpoint => checkpoint, :checkin_time => runner_time)
         runner_time = runner_time + rand(1800)
       end
@@ -58,11 +58,15 @@ class SampleDataGenerator
   def self.delete_generated_data
     runners = runner_ids.map {|rid| Runner.find(:first, :conditions => {:runner_id => rid})}
     checkpoints = checkpoint_names.map {|cname| Checkpoint.find(:first, :conditions => {:checkpoint_name => cname})}
-      
-    runners.each {|runner| runner.checkins.destroy_all}
-    runners.each {|runner| runner.tagged.destroy_all}
-    runners.each {|runner| runner.tags.destroy_all}
-    runners.destroy_all
-    checkpoints.destroy_all
+
+    runner_ids.each do |runner_id|       
+      ActiveRecord::Base.connection.execute("DELETE FROM tags where runner_id = '#{runner_id}' OR tagger_id = '#{runner_id}'")
+      ActiveRecord::Base.connection.execute("DELETE FROM checkins where runner_id = '#{runner_id}'")
+      ActiveRecord::Base.connection.execute("DELETE FROM runners where runner_id = '#{runner_id}'")
+    end
+    
+    checkpoint_names.each do |checkpoint_name|
+      ActiveRecord::Base.connection.execute("DELETE FROM checkpoints where checkpoint_name = '#{checkpoint_name}'")
+    end      
   end
 end
