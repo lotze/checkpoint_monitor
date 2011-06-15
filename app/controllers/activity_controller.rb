@@ -262,8 +262,7 @@ function init(){
     var legend = areaChart.getLegend(),
         listItems = [];
     for(var name in legend) {
-      listItems.push('<div class=\'query-color\' style=\'background-color:'
-          + legend[name] +'\'>&nbsp;</div>' + name);
+      listItems.push('<div class=\'query-color\' style=\'background-color:' + legend[name] +'\'>&nbsp;</div>' + name);
     }
     list.innerHTML = '<li>' + listItems.join('</li><li>') + '</li>';
 }
