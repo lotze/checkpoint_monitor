@@ -10,7 +10,7 @@ class RunnersController < ApplicationController
     @num_with_more_catches = nil
     @num_chasers = nil
     if (@is_chaser)
-      @num_with_more_catches = ActiveRecord::Base.connection.execute("SELECT COUNT(*) FROM (SELECT tagger_id, COUNT(*) as num_tags from tags group by tagger_id having num_tags > ?) AS tags_by_player;", @num_caught).first[0]
+      @num_with_more_catches = ActiveRecord::Base.connection.execute("SELECT COUNT(*) FROM (SELECT tagger_id, COUNT(*) as num_tags from tags group by tagger_id having num_tags > #{@num_caught}) AS tags_by_player;").first[0]
       @num_chasers = ActiveRecord::Base.connection.execute("SELECT COUNT(DISTINCT tagger_id) from tags;").first[0]
     end
     
