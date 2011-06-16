@@ -49,8 +49,9 @@ class RunnersController < ApplicationController
   
   def index
     #@ordered_runners = Runner.find(:all).sort {|a, b| (b.current_checkin.checkpoint_id <=> a.current_checkin.checkpoint_id) || (a.current_checkin.checkin_time.to_i <=> b.current_checkin.checkin_time.to_i)}[0..29]
-    @ordered_runners = Runner.find(:all).sort {|a, b| (b.current_checkin.checkpoint.checkpoint_position <=> a.current_checkin.checkpoint.checkpoint_position) || (a.current_checkin.checkin_time.to_i <=> b.current_checkin.checkin_time.to_i)}[0..29]
+    #@ordered_runners = Runner.find(:all).sort {|a, b| (b.current_position <=> a.current_position) || (a.current_time.to_i <=> b.current_time.to_i)}[0..29]
     #@ordered_runners = Runner.find(:all).sort {|a, b| (a.current_checkin.checkin_time.to_i <=> b.current_checkin.checkin_time.to_i)}[0..29]
+    @ordered_runners = Runner.find(:all).sort_by {|runner| [-runner.current_position, runner.current_time.to_i]}[0..29]
     @ordered_chasers = Runner.find(:all).sort {|a, b| b.tags.size <=> a.tags.size}[0..10]
   end
   

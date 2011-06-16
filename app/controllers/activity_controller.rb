@@ -27,18 +27,21 @@ class ActivityController < ApplicationController
     @line_plot = ActivityController.line_plot(end_times, merged_map)
 
     # get the highest checkpoint position reached by each player; do a stream graph of the highest checkpoint each person has reached, by time
-    checkpoint_positions = @summarized_checkpoints.map{|sm| sm.checkpoint.checkpoint_position}.unique
+    checkpoint_positions = @summarized_checkpoints.map{|sm| sm.checkpoint.checkpoint_position}.uniq
     merged_map = checkpoint_positions.inject({}) do |merged, pos|
-      all_sm_for_position = @summarized_checkpoints.find_all{|sm| sm.checkpoint.checkpoint_position == pos}.
-      combined_position = all_sm_for_position.first
-      if (all_sm_for_position.size > 1)
-        all_sm_for_position.each |sm, index| do
-          if (index > 0)
-            combined_position = combined_position.zip(sm).map {|pair| pair[0] + pair[1]}
+      all_sm_for_position = @summarized_checkpoints.find_all{|sm| sm.checkpoint.checkpoint_position == pos}
+      if (all_sm_for_position.size > 0)
+        combined_position = all_sm_for_position.first.checkin_hist(start_time,end_time,minute_interval)
+        if (all_sm_for_position.size > 1)
+          all_sm_for_position.each_with_index do |sm, index|
+            if (index > 0)
+              combined_position = combined_position.zip(sm.checkin_hist(start_time,end_time,minute_interval)).map {|pair| pair[0] + pair[1]}
+            end
           end
         end
+        merged.merge(pos => combined_position)
       end
-      merged.merge(pos => combined_position)
+      merged
     end 
     cumulative_map = merged_map.inject({}) {|new_hash, (key, val)| new_hash.merge(key => val.inject([]) {|cum_array, v| cum_array.size == 0 ? cum_array.push(v) : cum_array.push(v+cum_array.last)})}
     

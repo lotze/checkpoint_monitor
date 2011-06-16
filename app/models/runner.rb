@@ -13,6 +13,22 @@ class Runner < ActiveRecord::Base
     end
   end
   
+  def current_time
+    if (current_checkin.present?)
+      current_checkin.checkin_time
+    else
+      Checkin.find(:first).checkin_time - 86400
+    end
+  end
+  
+  def current_position
+    if (current_checkin.present?)
+      current_checkin.checkpoint.checkpoint_position
+    else
+      -1
+    end
+  end
+
   def current_checkin
     checkins.sort {|a, b| a.checkin_time <=> b.checkin_time}.last
   end

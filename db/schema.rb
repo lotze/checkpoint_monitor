@@ -10,7 +10,7 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110602000000) do
+ActiveRecord::Schema.define(:version => 20110615000001) do
 
   create_table "checkins", :id => false, :force => true do |t|
     t.integer  "checkin_id"
@@ -21,14 +21,31 @@ ActiveRecord::Schema.define(:version => 20110602000000) do
     t.string   "user_agent"
     t.float    "lng"
     t.float    "lat"
+    t.boolean  "is_valid",      :default => true
   end
+
+  add_index "checkins", ["checkin_time", "checkpoint_id", "is_valid"], :name => "index_checkins_on_checkin_time_and_checkpoint_id_and_is_valid"
+  add_index "checkins", ["checkpoint_id", "checkin_time", "is_valid"], :name => "index_checkins_on_checkpoint_id_and_checkin_time_and_is_valid"
+  add_index "checkins", ["checkpoint_id"], :name => "index_checkins_on_checkpoint_id"
+  add_index "checkins", ["lat"], :name => "index_checkins_on_lat"
+  add_index "checkins", ["lng"], :name => "index_checkins_on_lng"
+  add_index "checkins", ["runner_id", "checkpoint_id"], :name => "index_checkins_on_runner_id_and_checkpoint_id", :unique => true
 
   create_table "checkpoints", :id => false, :force => true do |t|
     t.integer "checkpoint_id"
     t.string  "checkpoint_name"
     t.float   "checkpoint_loc_lat"
     t.float   "checkpoint_loc_long"
+    t.boolean "is_mobile",           :default => false
+    t.boolean "is_bonus",            :default => false
+    t.integer "checkpoint_position"
   end
+
+  add_index "checkpoints", ["checkpoint_id"], :name => "index_checkpoints_on_checkpoint_id"
+  add_index "checkpoints", ["checkpoint_loc_lat"], :name => "index_checkpoints_on_checkpoint_loc_lat"
+  add_index "checkpoints", ["checkpoint_loc_long"], :name => "index_checkpoints_on_checkpoint_loc_long"
+  add_index "checkpoints", ["checkpoint_position"], :name => "index_checkpoints_on_checkpoint_position"
+  add_index "checkpoints", ["is_mobile", "is_bonus"], :name => "index_checkpoints_on_is_mobile_and_is_bonus"
 
   create_table "runners", :id => false, :force => true do |t|
     t.string   "runner_id"
@@ -40,6 +57,9 @@ ActiveRecord::Schema.define(:version => 20110602000000) do
     t.datetime "time_of_registration"
     t.boolean  "is_tagged"
   end
+
+  add_index "runners", ["is_tagged"], :name => "index_runners_on_is_tagged"
+  add_index "runners", ["runner_id"], :name => "index_runners_on_runner_id"
 
   create_table "tags", :id => false, :force => true do |t|
     t.integer  "tag_id"
@@ -53,5 +73,11 @@ ActiveRecord::Schema.define(:version => 20110602000000) do
     t.string   "user_agent"
     t.string   "ip_address"
   end
+
+  add_index "tags", ["loc_lat"], :name => "index_tags_on_loc_lat"
+  add_index "tags", ["loc_long"], :name => "index_tags_on_loc_long"
+  add_index "tags", ["runner_id", "tagger_id"], :name => "index_tags_on_runner_id_and_tagger_id", :unique => true
+  add_index "tags", ["tag_id"], :name => "index_tags_on_tag_id"
+  add_index "tags", ["tagger_id", "runner_id"], :name => "index_tags_on_tagger_id_and_runner_id"
 
 end
