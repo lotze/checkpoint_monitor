@@ -120,10 +120,12 @@ class SampleDataGenerator
               chaser = Runner.find(:first, :conditions => {:runner_id => random_chaser_id})
               puts " got chaser #{chaser.inspect}"
               if (chaser.present?)
-                chaser.update_attributes!(:is_tagged => true)
+                #chaser.update_attributes!(:is_tagged => true)
+                ActiveRecord::Base.connection.execute("update runners set is_tagged = 1 where runner_id='#{chaser.runner_id}'")
                 puts " chaser is marked"
               end
-              runner.update_attributes!(:is_tagged => true)
+              #runner.update_attributes!(:is_tagged => true)
+              ActiveRecord::Base.connection.execute("update runners set is_tagged = 1 where runner_id='#{runner.runner_id}'")
               puts " runner is marked"
             end
   
