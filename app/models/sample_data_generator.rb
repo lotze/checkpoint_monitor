@@ -33,7 +33,7 @@ class SampleDataGenerator
 
     if (checkpoints.size == 0)
       checkpoints = Range.new(1,2).map do |index|
-        Checkpoint.create!(:checkpoint_name => "Sample Bonus #{index}", :is_bonus => true, :checkpoint_id => index + 570, :checkpoint_position => nil)
+        Checkpoint.create!(:checkpoint_name => "Sammy Bonus #{index}", :is_bonus => true, :checkpoint_id => index + 570, :checkpoint_position => nil)
       end
     end
     
@@ -45,7 +45,7 @@ class SampleDataGenerator
 
     if (checkpoints.size == 0)
       checkpoints = Range.new(1,2).map do |index|
-        Checkpoint.create!(:checkpoint_name => "Sample Mobile #{index}", :is_mobile => true, :checkpoint_id => index + 580, :checkpoint_position => nil)
+        Checkpoint.create!(:checkpoint_name => "Sammy Mobile #{index}", :is_mobile => true, :checkpoint_id => index + 580, :checkpoint_position => nil)
       end
     end
     
