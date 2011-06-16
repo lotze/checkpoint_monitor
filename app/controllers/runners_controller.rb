@@ -44,7 +44,11 @@ class RunnersController < ApplicationController
         [Checkin.find(:first, :conditions => {:checkin_id => row[0]}), row[1].to_i]
       end
       
-    @num_ahead_right_now = @your_place_by_checkin.first[1]
+    if (@your_place_by_checkin.size > 0)
+      @num_ahead_right_now = @your_place_by_checkin.first[1]
+    else
+      @num_ahead_right_now = @num_runners
+    end
   end
   
   def index
