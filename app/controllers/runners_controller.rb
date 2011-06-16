@@ -76,9 +76,9 @@ class RunnersController < ApplicationController
       chaser_data["id"] = "CHASR"
       chaser_data["name"] = "The Great Chaser Spirit"
       all_tags = Tag.find(:all)
-      all_taggers = all_tags.map{|tag| tag.chaser}.uniq
-      all_tagged = all_tags.map{|tag| tag.runner}.uniq
-      all_unknown_origin_chasers = all_taggers - all_tagged
+      all_taggers = all_tags.map{|tag| tag.chaser.runner_id}.uniq
+      all_tagged = all_tags.map{|tag| tag.runner.runner_id}.uniq
+      all_unknown_origin_chasers = (all_taggers - all_tagged).map {|runner_id| Runner.find(:first, :conditions => {:runner_id => runner_id})}
       
       chaser_data["children"] = all_unknown_origin_chasers.map {|chaser| chaser_map(chaser)}
     else 
