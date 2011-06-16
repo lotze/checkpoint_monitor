@@ -27,7 +27,31 @@ class SampleDataGenerator
     
     return([new_lng, new_lat])
   end
+
+  def SampleDataGenerator.bonus_checkpoints
+    checkpoints = Checkpoint.find(:all, :conditions => "checkpoint_name like 'Sammy Bonus %'")
+
+    if (checkpoints.size == 0)
+      checkpoints = Range.new(1,2).map do |index|
+        Checkpoint.create!(:checkpoint_name => "Sample Bonus #{index}", :is_bonus => true, :checkpoint_id => index + 570, :checkpoint_position => nil)
+      end
+    end
     
+    return(checkpoints)  
+  end
+      
+  def SampleDataGenerator.mobile_checkpoints
+    checkpoints = Checkpoint.find(:all, :conditions => "checkpoint_name like 'Sammy Mobile %'")
+
+    if (checkpoints.size == 0)
+      checkpoints = Range.new(1,2).map do |index|
+        Checkpoint.create!(:checkpoint_name => "Sample Mobile #{index}", :is_mobile => true, :checkpoint_id => index + 580, :checkpoint_position => nil)
+      end
+    end
+    
+    return(checkpoints)  
+  end
+      
   def SampleDataGenerator.checkpoints
     checkpoints = Checkpoint.find(:all, :conditions => "checkpoint_name like 'Sample %'")
     
@@ -136,6 +160,15 @@ class SampleDataGenerator
           Checkin.create!(:runner => runner, :checkpoint => attempted_checkpoint, :checkin_time => runner_time)
         end
       end
+      
+      # if not a chaser, 20% chance of visiting each mobile or bonus checkpoint
+      if (!chaser_id_map.has_key?(runner.runner_id))
+        SampleDataGenerator.bonus_checkpoints.concat(SampleDataGenerator.mobile_checkpoints).each do |checkpoint|
+          if (rand() < 0.2)
+            Checkin.create!(:runner => runner, :checkpoint => checkpoint, :checkin_time => start_time + (rand() * (runner_time - start_time)).round)
+          end
+        end
+      end      
     end
     
     return(chaser_id_map)
@@ -194,7 +227,7 @@ class SampleDataGenerator
       ActiveRecord::Base.connection.execute("DELETE FROM runners where runner_id = '#{runner_id}'")
     end
     
-    checkpoints.each do |checkpoint|
+    Checkpoint.find(:all, :conditions => "checkpoint_name like 'Sam%'").each do |checkpoint|
       ActiveRecord::Base.connection.execute("DELETE FROM checkpoints where checkpoint_name = '#{checkpoint.checkpoint_name}'")
     end      
   end
