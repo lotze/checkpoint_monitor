@@ -5,8 +5,8 @@ class CreateTags < ActiveRecord::Migration
       t.string :runner_id
       t.string :tagger_id
       t.timestamp :tag_time
-      t.float :loc_lat
-      t.float :loc_long
+      t.double :loc_lat
+      t.double :loc_long
       t.string :loc_addr
       t.string :device_id
       t.string :user_agent

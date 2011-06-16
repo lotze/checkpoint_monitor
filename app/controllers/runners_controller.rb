@@ -16,15 +16,15 @@ class RunnersController < ApplicationController
     
     current_checkin = @runner.current_checkin
     
-    @your_place_by_checkin = ActiveRecord::Base.execute(["select
-      runner_checkins.checkpoint_id,
+    @your_place_by_checkin = ActiveRecord::Base.connection.execute("select
+      runner_checkins.checkin_id,
       sum(other_runner_checkins.runner_id is not null) as num_reaching_before
     from
-      checkins as runner_checkins,
+      checkins as runner_checkins
     join
       checkpoints as runner_checkpoints
     on
-      runner_checkins.checkpoint_id = runner_checkpoint.checkpoint_id
+      runner_checkins.checkpoint_id = runner_checkpoints.checkpoint_id
     join
       checkpoints as equivalent_checkpoints
     on
@@ -35,18 +35,22 @@ class RunnersController < ApplicationController
       other_runner_checkins.checkpoint_id = equivalent_checkpoints.checkpoint_id
       and other_runner_checkins.checkin_time < runner_checkins.checkin_time
     where
-      runner_checkins.runner_id = ?
+      runner_checkins.runner_id = '#{@runner.runner_id}'
     group by
       runner_checkins.checkpoint_id
-      ",@runner.runner_id])
-    
-    @num_reached_this_checkpoint_ahead_of_you_or_further_checkpoints = Checkin.find(:all, :conditions => ["(checkpoint_id = ? AND checkin_time < ?) OR checkpoint_id > ?",current_checkin.checkpoint_id, current_checkin.checkin_time, current_checkin.checkpoint_id]).size
+    order by
+      runner_checkins.checkin_time DESC
+      ").map do |row|
+        [Checkin.find(:first, :conditions => {:checkin_id => row[0]}), row[1].to_i]
+      end
+      
+    @num_ahead_right_now = @your_place_by_checkin.first[1]
   end
   
   def index
     #@ordered_runners = Runner.find(:all).sort {|a, b| (b.current_checkin.checkpoint_id <=> a.current_checkin.checkpoint_id) || (a.current_checkin.checkin_time.to_i <=> b.current_checkin.checkin_time.to_i)}[0..29]
-    #@ordered_runners = Runner.find(:all).sort {|a, b| (b.current_checkin.checkpoint.checkpoint_name <=> a.current_checkin.checkpoint.checkpoint_name) || (a.current_checkin.checkin_time.to_i <=> b.current_checkin.checkin_time.to_i)}[0..29]
-    @ordered_runners = Runner.find(:all).sort {|a, b| (a.current_checkin.checkin_time.to_i <=> b.current_checkin.checkin_time.to_i)}[0..29]
+    @ordered_runners = Runner.find(:all).sort {|a, b| (b.current_checkin.checkpoint.checkpoint_position <=> a.current_checkin.checkpoint.checkpoint_position) || (a.current_checkin.checkin_time.to_i <=> b.current_checkin.checkin_time.to_i)}[0..29]
+    #@ordered_runners = Runner.find(:all).sort {|a, b| (a.current_checkin.checkin_time.to_i <=> b.current_checkin.checkin_time.to_i)}[0..29]
     @ordered_chasers = Runner.find(:all).sort {|a, b| b.tags.size <=> a.tags.size}[0..10]
   end
   

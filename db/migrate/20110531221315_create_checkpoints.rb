@@ -4,8 +4,8 @@ class CreateCheckpoints < ActiveRecord::Migration
       t.integer :checkpoint_id
       t.string :checkpoint_name
       
-      t.float :checkpoint_loc_lat
-      t.float :checkpoint_loc_long
+      t.double :checkpoint_loc_lat
+      t.double :checkpoint_loc_long
 
 #      t.timestamps
     end

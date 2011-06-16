@@ -9,8 +9,8 @@ class CreateCheckins < ActiveRecord::Migration
       t.string :user_agent
       t.string :user_agent
       
-      t.float :lng
-      t.float :lat
+      t.double :lng
+      t.double :lat
 #      t.timestamp :reported_timestamp
 #      t.string :checksum
 #      t.timestamps
