@@ -2,6 +2,8 @@
 
 <% if (@is_chaser) %>
 <br />Currently a chaser.  As a chaser, has logged <%= @num_caught %> tags -- ranked <%= @num_with_more_catches + 1 %> out of <%= @num_chasers %> chasers with tags!
+<br />Your descendants:
+<%= @chaser_tree %>
 <% else %>
 <br />Not caught yet!
 <% end %>

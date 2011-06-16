@@ -12,6 +12,7 @@ class RunnersController < ApplicationController
     if (@is_chaser)
       @num_with_more_catches = ActiveRecord::Base.connection.execute("SELECT COUNT(*) FROM (SELECT tagger_id, COUNT(*) as num_tags from tags group by tagger_id having num_tags > #{@num_caught}) AS tags_by_player;").first[0]
       @num_chasers = ActiveRecord::Base.connection.execute("SELECT COUNT(DISTINCT tagger_id) from tags;").first[0]
+      @chaser_tree = chaser_descendants(@runner)
     end
     
     current_checkin = @runner.current_checkin
@@ -56,6 +57,200 @@ class RunnersController < ApplicationController
     @ordered_chasers = Runner.find(:all).sort_by {|runner| -runner.tags.size}[0..10].find_all{|runner| runner.tags.size > 0}
   end
   
-  def register
+  def chaser_tree
+    @chaser_tree = chaser_descendants(nil)
+  end
+    
+  def self.chaser_map(head_chaser)
+    chaser_data = Hash.new
+    chaser_data["id"] = head_chaser.runner_id
+    chaser_data["name"] = head_chaser.name
+    chaser_data["children"] = head_chaser.tags.map {|child| chaser_map(child)}
+      
+    return(chaser_data)
+  end
+  
+  def self.chaser_descendants(head_chaser)
+    if (head_chaser.nil?)
+      chaser_data = Hash.new
+      chaser_data["id"] = "CHASR"
+      chaser_data["name"] = "The Great Chaser Spirit"
+      all_tags = Tags.find(:all)
+      all_taggers = all_tags.map{|tag| tag.chaser}.uniq
+      all_tagged = all_tags.map{|tag| tag.runner}.uniq
+      all_unknown_origin_chasers = all_taggers - all_tagged
+      
+      chaser_data["children"] = all_unknown_origin_chasers.map {|chaser| chaser_map(chaser)}
+    else 
+      chaser_data = Runner.chaser_map(head_chaser)
+    end
+    
+    return <<JS
+    <link type="text/css" href="/cpm/stylesheets/jit/base.css" rel="stylesheet" />
+    <link type="text/css" href="/cpm/stylesheets/jit/Hypertree.css" rel="stylesheet" />
+    
+    <!--[if IE]><script language="javascript" type="text/javascript" src="/cpm/javascripts/vendor/jit/excanvas.js"></script><![endif]-->
+    
+    <!-- JIT Library File -->
+    <script language="javascript" type="text/javascript" src="/cpm/javascripts/vendor/jit/jit-yc.js"></script>
+    
+    <div id="container">
+    
+    <div id="left-container">
+
+    <div class="text">
+            <h4>
+    Tree Animation    
+            </h4> 
+    
+                A static JSON Tree structure is used as input for this animation.<br /><br />
+    
+                Clicking on a node should move the tree and center that node.<br /><br />
+                The centered node's children are displayed in a relations list in the right column.
+                
+            </div>
+    
+            <div id="id-list"></div>
+    
+    
+    <div style="text-align:center;"><a href="example1.code.html">See the Example Code</a></div>
+    </div>
+    
+    <div id="center-container">
+        <div id="infovis"></div>    
+    
+    </div>
+    
+    <div id="right-container">
+    
+    <div id="inner-details"></div>
+    
+    </div>
+    
+    <div id="log"></div>
+    </div>
+    
+    <script>
+var labelType, useGradients, nativeTextSupport, animate;
+
+(function() {
+  var ua = navigator.userAgent,
+      iStuff = ua.match(/iPhone/i) || ua.match(/iPad/i),
+      typeOfCanvas = typeof HTMLCanvasElement,
+      nativeCanvasSupport = (typeOfCanvas == 'object' || typeOfCanvas == 'function'),
+      textSupport = nativeCanvasSupport 
+        && (typeof document.createElement('canvas').getContext('2d').fillText == 'function');
+  //I'm setting this based on the fact that ExCanvas provides text support for IE
+  //and that as of today iPhone/iPad current text support is lame
+  labelType = (!nativeCanvasSupport || (textSupport && !iStuff))? 'Native' : 'HTML';
+  nativeTextSupport = labelType == 'Native';
+  useGradients = nativeCanvasSupport;
+  animate = !(iStuff || !nativeCanvasSupport);
+})();
+
+var Log = {
+  elem: false,
+  write: function(text){
+    if (!this.elem) 
+      this.elem = document.getElementById('log');
+    this.elem.innerHTML = text;
+    this.elem.style.left = (500 - this.elem.offsetWidth / 2) + 'px';
+  }
+};
+
+
+function init(){
+    //init data
+    var json = #{chaser_data.to_json};
+  var infovis = document.getElementById('infovis');
+  var w = infovis.offsetWidth - 50, h = infovis.offsetHeight - 50;
+  
+  //init Hypertree
+  var ht = new $jit.Hypertree({
+    //id of the visualization container
+    injectInto: 'infovis',
+    //canvas width and height
+    width: w,
+    height: h,
+    //Change node and edge styles such as
+    //color, width and dimensions.
+    Node: {
+        dim: 9,
+        color: "#f00"
+    },
+    Edge: {
+        lineWidth: 2,
+        color: "#088"
+    },
+    onBeforeCompute: function(node){
+        Log.write("centering");
+    },
+    //Attach event handlers and add text to the
+    //labels. This method is only triggered on label
+    //creation
+    onCreateLabel: function(domElement, node){
+        domElement.innerHTML = node.name;
+        $jit.util.addEvent(domElement, 'click', function () {
+            ht.onClick(node.id, {
+                onComplete: function() {
+                    ht.controller.onComplete();
+                }
+            });
+        });
+    },
+    //Change node styles when labels are placed
+    //or moved.
+    onPlaceLabel: function(domElement, node){
+        var style = domElement.style;
+        style.display = '';
+        style.cursor = 'pointer';
+        if (node._depth <= 1) {
+            style.fontSize = "0.8em";
+            style.color = "#ddd";
+
+        } else if(node._depth == 2){
+            style.fontSize = "0.7em";
+            style.color = "#555";
+
+        } else {
+            style.display = 'none';
+        }
+
+        var left = parseInt(style.left);
+        var w = domElement.offsetWidth;
+        style.left = (left - w / 2) + 'px';
+    },
+    
+    onComplete: function(){
+        Log.write("done");
+        
+        //Build the right column relations list.
+        //This is done by collecting the information (stored in the data property) 
+        //for all the nodes adjacent to the centered node.
+        var node = ht.graph.getClosestNodeToOrigin("current");
+        var html = "<h4>" + node.name + "</h4><b>Connections:</b>";
+        html += "<ul>";
+        node.eachAdjacency(function(adj){
+            var child = adj.nodeTo;
+            if (child.data) {
+                var rel = (child.data.band == node.name) ? child.data.relation : node.data.relation;
+                html += "<li>" + child.name + " " + "<div class=\"relation\">(relation: " + rel + ")</div></li>";
+            }
+        });
+        html += "</ul>";
+        $jit.id('inner-details').innerHTML = html;
+    }
+  });
+  //load JSON data.
+  ht.loadJSON(json);
+  //compute positions and plot.
+  ht.refresh();
+  //end
+  ht.controller.onComplete();
+}
+    
+init();    
+    </script>
+JS    
   end
 end

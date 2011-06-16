@@ -149,25 +149,40 @@ class SampleDataGenerator
       runner_time = runner.current_checkin.checkin_time
       second_half_checkpoints.each do |checkpoint|
         # this person is becoming a chaser
-        if (rand() < 0.1)          
+        if (rand() < 0.05)          
+          puts " got tagged"
           # see if we will even record the catch
           if (rand() < 0.5)
+            puts " we're recording it (tagging #{runner.inspect})"
             # figure out who they got caught by
+            puts " someone from #{chaser_id_map.inspect}"
             already_chasers = chaser_id_map.keys.find_all{|key| chaser_id_map[key] < runner_time}
-            random_chaser_id = already_chasers[rand(already_chasers)]
-
-            Tag.create!(:tagger_id => random_chaser_id, :runner_id => runner.id, :tag_time => runner_time)
+            puts " someone in #{already_chasers}"
+            random_chaser_id = already_chasers[rand(already_chasers.size)]
+            puts " #{random_chaser_id}"
+      
+            Tag.create!(:tagger_id => random_chaser_id, :runner_id => runner.runner_id, :tag_time => runner_time)
+            puts " created tag"
+            chaser = Runner.find(:first, :conditions => {:runner_id => random_chaser_id})
+            puts " got chaser #{chaser.inspect}"
+            if (chaser.present?)
+              #chaser.update_attributes!(:is_tagged => true)
+              ActiveRecord::Base.connection.execute("update runners set is_tagged = 1 where runner_id='#{chaser.runner_id}'")
+              puts " chaser is marked"
+            end
+            #runner.update_attributes!(:is_tagged => true)
+            ActiveRecord::Base.connection.execute("update runners set is_tagged = 1 where runner_id='#{runner.runner_id}'")
+            puts " runner is marked"
           end
 
           chaser_id_map[runner.runner_id] = runner_time
-          
-          return
         end
 
         runner_time = runner_time + rand(2400)
         Checkin.create!(:runner => runner, :checkpoint => checkpoint, :checkin_time => runner_time)
       end
-    end    
+    end 
+    return(chaser_id_map)   
   end
   
   def SampleDataGenerator.delete_generated_data

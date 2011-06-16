@@ -4,6 +4,10 @@ class Runner < ActiveRecord::Base
   has_many :tags, :foreign_key => :tagger_id, :primary_key => :runner_id
   has_many :tagged, :class_name => "Tag", :foreign_key => :runner_id, :primary_key => :runner_id
 
+  def name
+    player_name || runner_id
+  end
+  
   def caught_by
     t = Tag.find(:first, :conditions => {:runner_id => runner_id})
     if t.present?
