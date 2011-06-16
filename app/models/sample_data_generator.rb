@@ -74,10 +74,10 @@ class SampleDataGenerator
   
   def SampleDataGenerator.generate_early_data
     runners = runner_ids.map do |runner_id|
-      if (runner_id =~ /^RN$/)
+      if (runner_id =~ /^RN/)
         Runner.create!(:runner_id => runner_id)
       else
-        Runner.create!(:runner_id => runner_id, :player_name => "Firstname #{runner_id}", :is_mugshot => true)
+        Runner.create!(:runner_id => runner_id, :player_name => "Firstname #{runner_id}", :is_mugshot => true, :is_registered => true)
       end      
     end
       
@@ -103,11 +103,11 @@ class SampleDataGenerator
           attempted_checkpoint = valid_checkpoints[rand(valid_checkpoints.size)]
           
           # this person is becoming a chaser
-          if (rand() < 0.05)          
+          if (rand() < 0.1)          
             puts " got tagged"
             # see if we will even record the catch
             if (rand() < 0.5)
-              puts " we're recording it"
+              puts " we're recording it (tagging #{runner.inspect})"
               # figure out who they got caught by
               puts " someone from #{chaser_id_map.inspect}"
               already_chasers = chaser_id_map.keys.find_all{|key| chaser_id_map[key] < runner_time}
@@ -116,6 +116,15 @@ class SampleDataGenerator
               puts " #{random_chaser_id}"
         
               Tag.create!(:tagger_id => random_chaser_id, :runner_id => runner.runner_id, :tag_time => runner_time)
+              puts " created tag"
+              chaser = Runner.find(:first, :conditions => {:runner_id => random_chaser_id})
+              puts " got chaser #{chaser.inspect}"
+              if (chaser.present?)
+                chaser.update_attributes!(:is_tagged => true)
+                puts " chaser is marked"
+              end
+              runner.update_attributes!(:is_tagged => true)
+              puts " runner is marked"
             end
   
             chaser_id_map[runner.runner_id] = runner_time
