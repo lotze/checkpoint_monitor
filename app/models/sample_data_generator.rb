@@ -89,7 +89,7 @@ class SampleDataGenerator
     
     chaser_id_map = Hash.new()
     initial_chaser_ids.each do |chaser_id|
-      chaser_id_map[chaser_id] = start_time
+      chaser_id_map[chaser_id] = start_time - 1
     end
     
     runners.each do |runner|
