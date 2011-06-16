@@ -10,10 +10,9 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20110615000001) do
+ActiveRecord::Schema.define(:version => 20110615000002) do
 
-  create_table "checkins", :id => false, :force => true do |t|
-    t.integer  "checkin_id"
+  create_table "checkins", :primary_key => "checkin_id", :force => true do |t|
     t.string   "runner_id"
     t.integer  "checkpoint_id"
     t.datetime "checkin_time"
@@ -61,8 +60,7 @@ ActiveRecord::Schema.define(:version => 20110615000001) do
   add_index "runners", ["is_tagged"], :name => "index_runners_on_is_tagged"
   add_index "runners", ["runner_id"], :name => "index_runners_on_runner_id"
 
-  create_table "tags", :id => false, :force => true do |t|
-    t.integer  "tag_id"
+  create_table "tags", :primary_key => "tag_id", :force => true do |t|
     t.string   "runner_id"
     t.string   "tagger_id"
     t.datetime "tag_time"
