@@ -15,6 +15,31 @@ class RunnersController < ApplicationController
     end
     
     current_checkin = @runner.current_checkin
+    
+    @your_place_by_checkin = ActiveRecord::Base.execute(["select
+      runner_checkins.checkpoint_id,
+      sum(other_runner_checkins.runner_id is not null) as num_reaching_before
+    from
+      checkins as runner_checkins,
+    join
+      checkpoints as runner_checkpoints
+    on
+      runner_checkins.checkpoint_id = runner_checkpoint.checkpoint_id
+    join
+      checkpoints as equivalent_checkpoints
+    on
+      equivalent_checkpoints.checkpoint_position = runner_checkpoints.checkpoint_position
+    left outer join
+      checkins as other_runner_checkins
+    on
+      other_runner_checkins.checkpoint_id = equivalent_checkpoints.checkpoint_id
+      and other_runner_checkins.checkin_time < runner_checkins.checkin_time
+    where
+      runner_checkins.runner_id = ?
+    group by
+      runner_checkins.checkpoint_id
+      ",@runner.runner_id])
+    
     @num_reached_this_checkpoint_ahead_of_you_or_further_checkpoints = Checkin.find(:all, :conditions => ["(checkpoint_id = ? AND checkin_time < ?) OR checkpoint_id > ?",current_checkin.checkpoint_id, current_checkin.checkin_time, current_checkin.checkpoint_id]).size
   end
   
