@@ -224,9 +224,7 @@ class SampleDataGenerator
   end
   
   def SampleDataGenerator.delete_generated_data
-    rids = runner_ids
-    rids << initial_chaser_ids
-    rids.each do |runner_id|
+    SampleDataGenerator.runner_ids.concat(SampleDataGenerator.initial_chaser_ids).each do |runner_id|
       ActiveRecord::Base.connection.execute("DELETE FROM tags where runner_id = '#{runner_id}' OR tagger_id = '#{runner_id}'")
       ActiveRecord::Base.connection.execute("DELETE FROM checkins where runner_id = '#{runner_id}'")
       ActiveRecord::Base.connection.execute("DELETE FROM runners where runner_id = '#{runner_id}'")
