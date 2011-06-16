@@ -26,10 +26,11 @@ class RunnersController < ApplicationController
       checkpoints as runner_checkpoints
     on
       runner_checkins.checkpoint_id = runner_checkpoints.checkpoint_id
-    join
+    left outer join
       checkpoints as equivalent_checkpoints
     on
       equivalent_checkpoints.checkpoint_position = runner_checkpoints.checkpoint_position
+      or equivalent_checkpoints.checkpoint_id = runner_checkpoints.checkpoint_id
     left outer join
       checkins as other_runner_checkins
     on

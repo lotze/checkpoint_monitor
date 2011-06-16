@@ -1,6 +1,6 @@
 class SampleDataGenerator
   def SampleDataGenerator.runner_ids
-    ['RUBIN','TOMAS','RABIT','SEANM','SAMPL','IANKB','ARTMS','MYRNA','DAXTC'].concat(Range.new(10,99).map {|runner_num| "RNR#{runner_num}"})
+    ['RUBIN','TOMAS','RABIT','SEANM','SAMPL','IANKB','ARTMS','MYRNA','DAXTC'].concat(Range.new(100,999).map {|runner_num| "RN#{runner_num}"})
   end
   
   def SampleDataGenerator.initial_chaser_ids
@@ -165,7 +165,12 @@ class SampleDataGenerator
       if (!chaser_id_map.has_key?(runner.runner_id))
         SampleDataGenerator.bonus_checkpoints.concat(SampleDataGenerator.mobile_checkpoints).each do |checkpoint|
           if (rand() < 0.2)
-            Checkin.create!(:runner => runner, :checkpoint => checkpoint, :checkin_time => start_time + (rand() * (runner_time - start_time)).round)
+            if (rand() < 0.5)
+              checkin_time = start_time + (rand() * (runner_time - start_time)).round
+            else
+              checkin_time = runner_time + 600
+            end
+            Checkin.create!(:runner => runner, :checkpoint => checkpoint, :checkin_time => checkin_time)
           end
         end
       end      

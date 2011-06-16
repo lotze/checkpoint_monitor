@@ -27,7 +27,7 @@ class ActivityController < ApplicationController
     @line_plot = ActivityController.line_plot(end_times, merged_map)
 
     # get the highest checkpoint position reached by each player; do a stream graph of the highest checkpoint each person has reached, by time
-    checkpoint_positions = @summarized_checkpoints.map{|sm| sm.checkpoint.checkpoint_position}.uniq
+    checkpoint_positions = @summarized_checkpoints.map{|sm| sm.checkpoint.checkpoint_position}.compact.uniq
     merged_map = checkpoint_positions.inject({}) do |merged, pos|
       all_sm_for_position = @summarized_checkpoints.find_all{|sm| sm.checkpoint.checkpoint_position == pos}
       if (all_sm_for_position.size > 0)
