@@ -272,6 +272,7 @@ function init(){
     }
     list.innerHTML = '<li>' + listItems.join('</li><li>') + '</li>';
 }
+init();
   </script>
 JS
   end
