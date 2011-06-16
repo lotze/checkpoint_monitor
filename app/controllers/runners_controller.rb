@@ -2,7 +2,7 @@ class RunnersController < ApplicationController
   def show
     @runner = Runner.find(:first, :conditions => {:runner_id => params[:runner_id]})
       
-    @is_chaser = @runner.caught_by.present?
+    @is_chaser = @runner.caught_by.present? || @runner.is_tagged
     @num_caught = @runner.tags.size
     
     @num_runners = Runner.find(:all).size
@@ -44,7 +44,8 @@ class RunnersController < ApplicationController
         [Checkin.find(:first, :conditions => {:checkin_id => row[0]}), row[1].to_i]
       end
       
-    @num_ahead_right_now = @your_place_by_checkin.first[1]
+    @ordered_runners = Runner.find(:all).sort_by {|runner| [-runner.current_position, runner.current_time.to_i]}
+    @num_ahead_right_now = @ordered_runners.index(@runner)
   end
   
   def index
@@ -52,7 +53,7 @@ class RunnersController < ApplicationController
     #@ordered_runners = Runner.find(:all).sort {|a, b| (b.current_position <=> a.current_position) || (a.current_time.to_i <=> b.current_time.to_i)}[0..29]
     #@ordered_runners = Runner.find(:all).sort {|a, b| (a.current_checkin.checkin_time.to_i <=> b.current_checkin.checkin_time.to_i)}[0..29]
     @ordered_runners = Runner.find(:all).sort_by {|runner| [-runner.current_position, runner.current_time.to_i]}[0..29]
-    @ordered_chasers = Runner.find(:all).sort {|a, b| b.tags.size <=> a.tags.size}[0..10]
+    @ordered_chasers = Runner.find(:all).sort_by {|runner| -runner.tags.size}[0..10].find_all{|runner| runner.tags.size > 0}
   end
   
   def register
