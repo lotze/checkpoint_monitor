@@ -45,7 +45,7 @@ class RunnersController < ApplicationController
       end
       
     @ordered_runners = Runner.find(:all).sort_by {|runner| [-runner.current_position, runner.current_time.to_i]}
-    @num_ahead_right_now = @ordered_runners.index(@runner)
+    @num_ahead_right_now = @ordered_runners.map{|runner| runner.runner_id}.index(@runner.runner_id)
   end
   
   def index

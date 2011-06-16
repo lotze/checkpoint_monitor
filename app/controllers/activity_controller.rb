@@ -40,8 +40,9 @@ class ActivityController < ApplicationController
           end
         end
         merged.merge(pos => combined_position)
+      else
+        merged
       end
-      merged
     end 
     cumulative_map = merged_map.inject({}) {|new_hash, (key, val)| new_hash.merge(key => val.inject([]) {|cum_array, v| cum_array.size == 0 ? cum_array.push(v) : cum_array.push(v+cum_array.last)})}
     
