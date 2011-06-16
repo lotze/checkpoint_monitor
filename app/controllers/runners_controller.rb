@@ -12,7 +12,7 @@ class RunnersController < ApplicationController
     if (@is_chaser)
       @num_with_more_catches = ActiveRecord::Base.connection.execute("SELECT COUNT(*) FROM (SELECT tagger_id, COUNT(*) as num_tags from tags group by tagger_id having num_tags > #{@num_caught}) AS tags_by_player;").first[0]
       @num_chasers = ActiveRecord::Base.connection.execute("SELECT COUNT(DISTINCT tagger_id) from tags;").first[0]
-      @chaser_tree = chaser_descendants(@runner)
+      @chaser_tree = RunnersController.chaser_descendants(@runner)
     end
     
     current_checkin = @runner.current_checkin
@@ -58,14 +58,14 @@ class RunnersController < ApplicationController
   end
   
   def chaser_tree
-    @chaser_tree = chaser_descendants(nil)
+    @chaser_tree = RunnersController.chaser_descendants(nil)
   end
     
   def self.chaser_map(head_chaser)
     chaser_data = Hash.new
     chaser_data["id"] = head_chaser.runner_id
     chaser_data["name"] = head_chaser.name
-    chaser_data["children"] = head_chaser.tags.map {|child| chaser_map(child)}
+    chaser_data["children"] = head_chaser.tags.map {|child| chaser_map(child.runner)}
       
     return(chaser_data)
   end
@@ -75,14 +75,14 @@ class RunnersController < ApplicationController
       chaser_data = Hash.new
       chaser_data["id"] = "CHASR"
       chaser_data["name"] = "The Great Chaser Spirit"
-      all_tags = Tags.find(:all)
+      all_tags = Tag.find(:all)
       all_taggers = all_tags.map{|tag| tag.chaser}.uniq
       all_tagged = all_tags.map{|tag| tag.runner}.uniq
       all_unknown_origin_chasers = all_taggers - all_tagged
       
       chaser_data["children"] = all_unknown_origin_chasers.map {|chaser| chaser_map(chaser)}
     else 
-      chaser_data = Runner.chaser_map(head_chaser)
+      chaser_data = RunnersController.chaser_map(head_chaser)
     end
     
     return <<JS
@@ -99,21 +99,10 @@ class RunnersController < ApplicationController
     <div id="left-container">
 
     <div class="text">
-            <h4>
-    Tree Animation    
-            </h4> 
-    
-                A static JSON Tree structure is used as input for this animation.<br /><br />
-    
-                Clicking on a node should move the tree and center that node.<br /><br />
-                The centered node's children are displayed in a relations list in the right column.
-                
+                Clicking on a chaser node should move the tree and center that node.<br /><br />
             </div>
     
             <div id="id-list"></div>
-    
-    
-    <div style="text-align:center;"><a href="example1.code.html">See the Example Code</a></div>
     </div>
     
     <div id="center-container">
@@ -183,7 +172,6 @@ function init(){
         color: "#088"
     },
     onBeforeCompute: function(node){
-        Log.write("centering");
     },
     //Attach event handlers and add text to the
     //labels. This method is only triggered on label
@@ -222,23 +210,6 @@ function init(){
     },
     
     onComplete: function(){
-        Log.write("done");
-        
-        //Build the right column relations list.
-        //This is done by collecting the information (stored in the data property) 
-        //for all the nodes adjacent to the centered node.
-        var node = ht.graph.getClosestNodeToOrigin("current");
-        var html = "<h4>" + node.name + "</h4><b>Connections:</b>";
-        html += "<ul>";
-        node.eachAdjacency(function(adj){
-            var child = adj.nodeTo;
-            if (child.data) {
-                var rel = (child.data.band == node.name) ? child.data.relation : node.data.relation;
-                html += "<li>" + child.name + " " + "<div class=\"relation\">(relation: " + rel + ")</div></li>";
-            }
-        });
-        html += "</ul>";
-        $jit.id('inner-details').innerHTML = html;
     }
   });
   //load JSON data.
@@ -251,6 +222,6 @@ function init(){
     
 init();    
     </script>
-JS    
+JS
   end
 end

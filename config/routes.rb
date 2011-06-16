@@ -1,8 +1,8 @@
 SurvivedcOrg::Application.routes.draw do
   root :to => "activity#status"
 
-  match 'runners/:runner_id' => 'runners#show'
   match 'runners/chaser_tree' => 'runners#chaser_tree'
+  match 'runners/:runner_id' => 'runners#show'
   match 'runners' => 'runners#index'
 
   #resources :users
