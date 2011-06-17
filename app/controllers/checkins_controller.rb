@@ -5,13 +5,18 @@ class CheckinsController < ApplicationController
     # if the request does not have runner id and checkpoint id set, then provide a form to enter them
     @checkin = Checkin.new
 
-    if request.post?
+    if (params[:rid])
       @checkin.runner_id = params[:rid][0,5]
 # logger.info "#{params[:rid]} became #{@checkin.runner_id}"
 # logger.info "photo is #{params[:runner_photo_file].inspect}"
       @checkin.checkpoint_id = params[:cid]
-      if (params[:runner_photo_file])
-        Runner.find(:first, :conditions => {:runner_id => @checkin.runner_id}).save_photo(params[:runner_photo_file])
+      @checkin.device_id = params[:did]
+      @checkin.ip_address = request.remote_ip
+      @checkin.user_agent = request.user_agent
+            
+      if (request.post? && params[:runner_photo_file])
+        r = Runner.find(:first, :conditions => {:runner_id => @checkin.runner_id}) || Runner.create!(:runner_id => @checkin.runner_id)
+        r.save_photo(params[:runner_photo_file])
       end
       
       #@checkin.checkin_time = params[:timestamp] ? Time.new(params[:timestamp]) : Time.new

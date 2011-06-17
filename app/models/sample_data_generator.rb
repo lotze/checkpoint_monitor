@@ -1,13 +1,13 @@
 class SampleDataGenerator
   def SampleDataGenerator.insert_rabbit_data
-    ActiveRecord::Base.connection.execute("INSERT INTO checkins (checkin_id, runner_id, checkpoint_id, checkin_time, device_id, user_agent, ip_address) VALUES
-    (6, 'DFH798', 0, '2011-06-02 00:13:29', 'some device', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', '50.0.92.218'),
-    (8, 'DFH798', 5, '2011-06-02 00:14:46', 'some device', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', '50.0.92.218'),
-    (9, '12345', 1, '2011-06-02 00:21:22', 'some device', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_2_1 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C148 Safari/6533.18.5', '50.0.92.218'),
-    (11, '12345', 0, '2011-06-02 00:23:44', 'some device', 'Mozilla/5.0 (Linux; U; Android 2.3.3; en-us; HTC Vision Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1', '208.54.5.158'),
-    (12, '12345', 4, '2011-06-02 00:24:21', 'some device', 'Mozilla/5.0 (Linux; U; Android 2.3.3; en-us; HTC Vision Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1', '208.54.5.158'),
-    (17, '12345', 8, '2011-06-02 00:38:39', 'some device', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_1_3 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7E18 Safari/528.16', '50.0.92.218'),
-    (18, '', 5, '2011-06-02 21:50:19', 'some device', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', '50.0.92.218');")
+    ActiveRecord::Base.connection.execute("INSERT INTO checkins (runner_id, checkpoint_id, checkin_time, device_id, user_agent, ip_address) VALUES
+    ('DFH798', 0, '2011-06-02 00:13:29', 'some device', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', '50.0.92.218'),
+    ('DFH798', 5, '2011-06-02 00:14:46', 'some device', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', '50.0.92.218'),
+    ('12345', 1, '2011-06-02 00:21:22', 'some device', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 4_2_1 like Mac OS X; en-us) AppleWebKit/533.17.9 (KHTML, like Gecko) Version/5.0.2 Mobile/8C148 Safari/6533.18.5', '50.0.92.218'),
+    ('12345', 0, '2011-06-02 00:23:44', 'some device', 'Mozilla/5.0 (Linux; U; Android 2.3.3; en-us; HTC Vision Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1', '208.54.5.158'),
+    ('12345', 4, '2011-06-02 00:24:21', 'some device', 'Mozilla/5.0 (Linux; U; Android 2.3.3; en-us; HTC Vision Build/FRF91) AppleWebKit/533.1 (KHTML, like Gecko) Version/4.0 Mobile Safari/533.1', '208.54.5.158'),
+    ('12345', 8, '2011-06-02 00:38:39', 'some device', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_1_3 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7E18 Safari/528.16', '50.0.92.218'),
+    ('', 5, '2011-06-02 21:50:19', 'some device', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', '50.0.92.218');")
     
     ActiveRecord::Base.connection.execute("INSERT INTO checkpoints (checkpoint_id, checkpoint_name, checkpoint_loc_lat, checkpoint_loc_long) VALUES
     (0, 'Registration', 0, 0),
@@ -28,11 +28,11 @@ class SampleDataGenerator
     (201, 'Bonus Checkpoint 2', NULL, NULL);")
     
     ActiveRecord::Base.connection.execute("INSERT INTO runners (runner_id, player_email, player_name, is_registered, time_of_registration, is_tagged) VALUES
-    ('123AB', 'edrabbit2@edrabbit.com', 'Ed', '', 1, '2011-06-02 23:23:52', 0),
-    ('123AC', '', '', '', 0, '2011-06-02 23:26:22', 0);")
+    ('123AB', 'edrabbit2@edrabbit.com', 'Ed', 1, '2011-06-02 23:23:52', 0),
+    ('123AC', '', '', 0, '2011-06-02 23:26:22', 0);")
     
-    ActiveRecord::Base.connection.execute("INSERT INTO tags (tag_id, runner_id, tagger_id, tag_time, loc_lat, loc_long, device_id, user_agent, ip_address) VALUES
-    (6, '123AC', '123AB', '2011-06-03 00:10:51', 37, -122, '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', '50.0.92.218');")
+    ActiveRecord::Base.connection.execute("INSERT INTO tags (runner_id, tagger_id, tag_time, loc_lat, loc_long, device_id, user_agent, ip_address) VALUES
+    ('123AC', '123AB', '2011-06-03 00:10:51', 37, -122, '', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', '50.0.92.218');")
   end
     
   def SampleDataGenerator.runner_ids
@@ -256,7 +256,7 @@ class SampleDataGenerator
         Checkin.create!(:runner => runner, :checkpoint => checkpoint, :checkin_time => runner_time)
       end
     end 
-    return(chaser_id_map)   
+    return(chaser_id_map)
   end
   
   def SampleDataGenerator.delete_generated_data
