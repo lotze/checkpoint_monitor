@@ -9,23 +9,25 @@ class SampleDataGenerator
     ('12345', 8, '2011-06-02 00:38:39', 'some device', 'Mozilla/5.0 (iPhone; U; CPU iPhone OS 3_1_3 like Mac OS X; en-us) AppleWebKit/528.18 (KHTML, like Gecko) Version/4.0 Mobile/7E18 Safari/528.16', '50.0.92.218'),
     ('', 5, '2011-06-02 21:50:19', 'some device', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.6; rv:2.0.1) Gecko/20100101 Firefox/4.0.1', '50.0.92.218');")
     
-    ActiveRecord::Base.connection.execute("INSERT INTO checkpoints (checkpoint_id, checkpoint_name, checkpoint_loc_lat, checkpoint_loc_long) VALUES
-    (0, 'Registration', 0, 0),
-    (3, 'Checkpoint 3', NULL, NULL),
-    (4, 'Checkpoint 4', NULL, NULL),
-    (5, 'Checkpoint 5', NULL, NULL),
-    (6, 'Checkpoint 6', NULL, NULL),
-    (7, 'Checkpoint 7', NULL, NULL),
-    (8, 'Checkpoint 8', NULL, NULL),
-    (10, 'Checkpoint 1A', NULL, NULL),
-    (11, 'Checkpoint 1B', NULL, NULL),
-    (20, 'Checkpoint 2A', NULL, NULL),
-    (21, 'Checkpoint 2B', NULL, NULL),
-    (100, 'Mobile Checkpoint 1', NULL, NULL),
-    (101, 'Mobile Checkpoint 2', NULL, NULL),
-    (102, 'Mobile Checkpoint 3', NULL, NULL),
-    (200, 'Bonus Checkpoint 1', NULL, NULL),
-    (201, 'Bonus Checkpoint 2', NULL, NULL);")
+    ActiveRecord::Base.connection.execute("INSERT INTO checkpoints (checkpoint_id, checkpoint_name, checkpoint_loc_lat, checkpoint_loc_long, checkpoint_position) VALUES
+    (0, 'Registration', 0, 0, 0),
+    (3, 'Checkpoint 3', NULL, NULL, 3),
+    (4, 'Checkpoint 4', NULL, NULL, 4),
+    (5, 'Checkpoint 5', NULL, NULL, 5),
+    (6, 'Checkpoint 6', NULL, NULL, 6),
+    (7, 'Checkpoint 7', NULL, NULL, 7),
+    (8, 'Checkpoint 8', NULL, NULL, 8),
+    (10, 'Checkpoint 1A', NULL, NULL, 1),
+    (11, 'Checkpoint 1B', NULL, NULL, 1),
+    (20, 'Checkpoint 2A', NULL, NULL, 2),
+    (21, 'Checkpoint 2B', NULL, NULL, 2),
+    (100, 'Mobile Checkpoint 1', NULL, NULL, NULL),
+    (101, 'Mobile Checkpoint 2', NULL, NULL, NULL),
+    (102, 'Mobile Checkpoint 3', NULL, NULL, NULL),
+    (200, 'Bonus Checkpoint 1', NULL, NULL, NULL),
+    (201, 'Bonus Checkpoint 2', NULL, NULL, NULL);")
+    ActiveRecord::Base.connection.execute("update checkpoints set is_mobile=1 where checkpoint_name like '%Mobile%'")
+    ActiveRecord::Base.connection.execute("update checkpoints set is_bonus=1 where checkpoint_name like '%Bonus%'")
     
     ActiveRecord::Base.connection.execute("INSERT INTO runners (runner_id, player_email, player_name, is_registered, time_of_registration, is_tagged) VALUES
     ('123AB', 'edrabbit2@edrabbit.com', 'Ed', 1, '2011-06-02 23:23:52', 0),
