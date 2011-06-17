@@ -8,6 +8,7 @@ class CreateCheckins < ActiveRecord::Migration
       t.string :device_id
       t.string :user_agent
       t.string :user_agent
+      t.string :ip_address
       
       t.float :lng, :limit => 53
       t.float :lat, :limit => 53

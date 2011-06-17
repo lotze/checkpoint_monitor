@@ -14,10 +14,10 @@ class AddIndices < ActiveRecord::Migration
     add_index :checkpoints, :checkpoint_loc_long
     add_index :checkpoints, [:is_mobile, :is_bonus]
 
-    add_index :runners, :runner_id, :name => runner_id
+    add_index :runners, :runner_id, :name => :runner_id
     add_index :runners, :is_tagged
 
-    add_index :tags, :tag_id, :name => tag_id
+    add_index :tags, :tag_id, :name => :tag_id
     add_index :tags, [:runner_id, :tagger_id], :unique => true, :name => :runner_id
     add_index :tags, [:tagger_id, :runner_id]
     add_index :tags, :loc_lat
