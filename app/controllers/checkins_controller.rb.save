@@ -1,0 +1,28 @@
+class CheckinsController < ApplicationController
+  def checkin
+    # if the request does not have runner id and checkpoint id set, then provide a form to enter them
+    @checkin = Checkin.new
+
+    if request.post?  
+      @checkin.runner_id = params[:runner_id]
+      @checkin.checkpoint_id = params[:checkpoint_id]
+      @checkin.checkin_time = Time.new(params[:timestamp]) || Time.new
+      if @checkin.save
+        flash[:notice] = "Checkin successful"
+	redirect_to "checkins/completed", :runner_id => params[:runner_id], :checkpoint_id => params[:checkpoint_id]
+      else
+        flash[:notice] = "Checkin unsuccessful"
+      end
+      if (params[
+    end
+
+    respond_to do |format|
+      format.html
+      format.xml  { render :xml => @checkin }
+    end    
+  end
+  
+  def completed
+    @action_text = "Congratulations, #{params[:runner_id]} has been checked in to #{params[:checkpoint_id]}"
+  end
+end
