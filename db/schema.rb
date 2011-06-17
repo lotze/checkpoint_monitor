@@ -18,6 +18,7 @@ ActiveRecord::Schema.define(:version => 20110615000002) do
     t.datetime "checkin_time"
     t.string   "device_id"
     t.string   "user_agent"
+    t.string   "ip_address"
     t.float    "lng"
     t.float    "lat"
     t.boolean  "is_valid",      :default => true
