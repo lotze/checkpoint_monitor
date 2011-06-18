@@ -1,4 +1,6 @@
 SurvivedcOrg::Application.routes.draw do
+  match 'checkpoints/:checkpoint_id' => 'checkpoints#show'
+
   get "checkins/checkin"
   post "checkins/checkin"
   get "checkins/completed"
